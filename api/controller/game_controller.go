@@ -1,8 +1,16 @@
 package controller
 
-import "fmt"
+import (
+	"net/http"
+)
 
 // Test handler function
-func TestHandler(s string) string {
-	return fmt.Sprintf("Test controller method %v\n", s)
+func testConnection(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		w.Write([]byte("Connected"))
+		return
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }

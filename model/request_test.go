@@ -20,3 +20,19 @@ func TestRequestMarshal(t *testing.T) {
 		t.Errorf("Marshal result did not match expected result\ntestResult: %v\nexpectedRequestResult: %v\n", string(testResult), expextedRequestResult)
 	}
 }
+
+func TestRequestUnMarshal(t *testing.T) {
+	testRequest := []byte("{\"title\":\"string\",\"system\":\"PC\"}")
+	expextedRequestResult := Request{
+		Title:  "string",
+		System: "PC",
+	}
+
+	testResult, err := UnMarshalRequest(testRequest)
+	if err != nil {
+		t.Errorf("Error when calling json.UnMarshal()\n%v\n", err)
+	}
+	if testResult != expextedRequestResult {
+		t.Errorf("Marshal result did not match expected result\ntestResult: %+v\nexpectedRequestResult: %+v\n", testResult, expextedRequestResult)
+	}
+}

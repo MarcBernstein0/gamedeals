@@ -4,8 +4,8 @@ import (
 	"net/http"
 )
 
-// Test handler function
-func testConnection(w http.ResponseWriter, r *http.Request) {
+// TestHandler function
+func TestHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		w.Write([]byte("Connected"))

@@ -9,10 +9,19 @@ type Response struct {
 	StoreURL string  `json:"storeURL"`
 }
 
-func (r Response) MarshalResponse() ([]byte, error) {
-	jsonMarshal, err := json.Marshal(r)
+func MarshalResponse(response Response) ([]byte, error) {
+	jsonMarshal, err := json.Marshal(response)
 	if err != nil {
 		return nil, err
 	}
 	return jsonMarshal, nil
+}
+
+func UnMarshalResponse(rawResponse []byte) (Response, error) {
+	var response Response
+	err := json.Unmarshal(rawResponse, &response)
+	if err != nil {
+		return Response{}, err
+	}
+	return response, nil
 }

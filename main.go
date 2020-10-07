@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -9,10 +8,10 @@ import (
 )
 
 func main() {
-	http.HandleFunc("api/test_connection", controller.TestHandler)
+	log.Println("Starting server")
+	http.HandleFunc("/api/test_connection", controller.TestHandler)
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
 		log.Fatalf("Server failed\n%v\n", err)
 	}
-	fmt.Printf("Hello world\n")
 }

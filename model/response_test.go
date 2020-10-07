@@ -24,10 +24,6 @@ func TestMarshal(t *testing.T) {
 		t.Errorf("Marshal result did not match expected result\ntestResult: %v\nexpectedResult: %v\n", string(testResult), expectedResult)
 	}
 
-	if err != nil {
-		t.Errorf("Error when calling json.Marshal()\n%v\n", err)
-	}
-
 }
 
 func TestUnMarshal(t *testing.T) {

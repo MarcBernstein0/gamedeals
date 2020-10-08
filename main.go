@@ -9,7 +9,7 @@ import (
 
 func main() {
 	log.Println("Starting server")
-	http.HandleFunc("/api/test_connection", controller.TestHandler)
+	http.HandleFunc("/api/health-check", controller.HealthCheckHandler)
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
 		log.Fatalf("Server failed\n%v\n", err)

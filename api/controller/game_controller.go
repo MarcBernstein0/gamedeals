@@ -17,6 +17,10 @@ func findGameHandler(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		// TODO: Make post request
+		if err := r.ParseForm(); err != nil {
+			http.Error(rw, fmt.Sprintf("Err with ParseForm %v\n", err), http.StatusBadRequest)
+			return
+		}
 		rw.WriteHeader(http.StatusAccepted)
 	default:
 		http.Error(rw, "Method not allowed", http.StatusMethodNotAllowed)

@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
@@ -36,46 +36,57 @@ func TestHealthCheckHandler(t *testing.T) {
 
 func TestGameHandler(t *testing.T) {
 
+	jsonRequest := []byte(`{"title":"string","system":"PC"}`)
+
 	log.Println("Test 1: Test Wrong Method")
-	req, err := http.NewRequest("GET", "/api/findGame", nil)
-	if err != nil {
-		log.Fatalf("Error when creating test request\n%v\n", err)
-	}
-
-	recordResponse := sendRequest(req, findGameHandler)
-
-	if status := recordResponse.Code; status != http.StatusMethodNotAllowed {
-		t.Errorf("Method sent was not allowed but did not return a MethodNotAllowed(405) error\nexpected: %d got: %d\n", http.StatusMethodNotAllowed, status)
-	}
-	log.Println("Test 1: Pass")
-
-	log.Println("Test 2: Test Status Response")
-	jsonRequest := strings.NewReader(`{"title":"string","system":"PC"}`)
-	req1, err := http.NewRequest("POST", "/api/findGame", jsonRequest)
+	req1, err := http.NewRequest("GET", "/api/findGame", nil)
 	if err != nil {
 		log.Fatalf("Error when creating test request\n%v\n", err)
 	}
 
 	recordResponse1 := sendRequest(req1, findGameHandler)
 
-	if status := recordResponse1.Code; status != http.StatusAccepted {
-		t.Errorf("handler returned back wrong status code: got %v want %v\n", status, http.StatusAccepted)
+	if status := recordResponse1.Code; status != http.StatusMethodNotAllowed {
+		t.Errorf("Method sent was not allowed but did not return a MethodNotAllowed(405) error\nexpected: %d got: %d\n", http.StatusMethodNotAllowed, status)
 	}
 
-	log.Println("Test 2: Pass")
+	log.Println("Test 2: Test Status Response")
 
-	log.Println("Test 3: Test nil Post")
-	req2, err := http.NewRequest("POST", "/api/findGame", nil)
+	req2, err := http.NewRequest("POST", "/api/findGame", bytes.NewBuffer(jsonRequest))
 	if err != nil {
 		log.Fatalf("Error when creating test request\n%v\n", err)
 	}
 
 	recordResponse2 := sendRequest(req2, findGameHandler)
-	if status := recordResponse2.Code; status != http.StatusBadRequest {
+
+	if status := recordResponse2.Code; status != http.StatusAccepted {
+		t.Errorf("handler returned back wrong status code: got %v want %v\n", status, http.StatusAccepted)
+	}
+
+	log.Println("Test 3: Test nil Post")
+	req3, err := http.NewRequest("POST", "/api/findGame", nil)
+	// log.Println(req3)
+	if err != nil {
+		log.Fatalf("Error when creating test request\n%v\n", err)
+	}
+
+	recordResponse3 := sendRequest(req3, findGameHandler)
+	if status := recordResponse3.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned back wrong status code: got %v want %v\n", status, http.StatusBadRequest)
 	}
 
-	log.Println("Test 3: Pass")
+	log.Println("Test 4: Handle Non-Nil Posts Bad Request")
+	badRequest := []byte(`{"title": "string"`)
+	req4, err := http.NewRequest("POST", "/api/findGame", bytes.NewBuffer(badRequest))
+	if err != nil {
+		log.Fatalf("Error when creating test request\n%v\n", err)
+	}
+
+	recordResponse4 := sendRequest(req4, findGameHandler)
+	log.Println(recordResponse4)
+	if status := recordResponse4.Code; status != http.StatusBadRequest {
+		t.Errorf("handler returned back wrong status code: got %v want %v\n", status, http.StatusBadRequest)
+	}
 
 }
 

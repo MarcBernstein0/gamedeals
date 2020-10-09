@@ -39,6 +39,7 @@ func TestGameHandler(t *testing.T) {
 	jsonRequest := []byte(`{"title":"string","system":"PC"}`)
 
 	log.Println("Test 1: Test Wrong Method")
+
 	req1, err := http.NewRequest("GET", "/api/findGame", nil)
 	if err != nil {
 		log.Fatalf("Error when creating test request\n%v\n", err)
@@ -83,9 +84,20 @@ func TestGameHandler(t *testing.T) {
 	}
 
 	recordResponse4 := sendRequest(req4, findGameHandler)
-	log.Println(recordResponse4)
 	if status := recordResponse4.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned back wrong status code: got %v want %v\n", status, http.StatusBadRequest)
+	}
+
+	log.Println("Test 5: Test Content Type")
+
+	req5, err := http.NewRequest("POST", "/api/findGame", bytes.NewBuffer(jsonRequest))
+	if err != nil {
+		log.Fatalf("Error when creating test request\n%v\n", err)
+	}
+
+	recordResponse5 := sendRequest(req5, findGameHandler)
+	if contentType := recordResponse5.HeaderMap.Get("Content-Type"); contentType != "application/json" {
+		t.Errorf("handler returned back wrong content type: got %v want %v\n", contentType, "application/json")
 	}
 
 }

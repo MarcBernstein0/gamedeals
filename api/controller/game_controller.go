@@ -3,20 +3,20 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/MarcBernstein0/gamedeals/api/middleware"
 	"github.com/MarcBernstein0/gamedeals/api/model"
 )
 
 // healthCheckHandler function
 func healthCheckHandler(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
 	fmt.Fprint(rw, `{"alive":true}`)
 }
 
 func findGameHandler(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
 	switch r.Method {
 	case http.MethodPost:
 		// check if body is empty
@@ -30,7 +30,6 @@ func findGameHandler(rw http.ResponseWriter, r *http.Request) {
 		// fmt.Println(decode)
 		err := decode.Decode(&request)
 		if err != nil {
-			log.Printf("%T, %v\n", err, err)
 			http.Error(rw, fmt.Sprintf("Error with request decoding %v\n", err), http.StatusBadRequest)
 			return
 		}
@@ -44,6 +43,6 @@ func findGameHandler(rw http.ResponseWriter, r *http.Request) {
 
 // SetupRoutes function
 func SetupRoutes(apiPath string) {
-	healthHandler := http.HandlerFunc(healthCheckHandler)
-	http.Handle(fmt.Sprintf("%s/health-check", apiPath), middleware.HeaderMiddleWare(healthHandler))
+	http.HandleFunc(fmt.Sprintf("%s/health-check", apiPath), healthCheckHandler)
+	http.HandleFunc(fmt.Sprintf("%s/findGame", apiPath), findGameHandler)
 }
